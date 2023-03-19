@@ -1,0 +1,128 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <a class="navbar-brand" style="color:white;">MyBooks</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarColor02">
+     <ul class="navbar-nav mr-auto">
+        <li class="nav-item active"  >
+           <a class="nav-link" (click)="onAddRequest()" [hidden]="!loggedIn">Raise Request <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+           <a class="nav-link" (click)="onOpenModal('login')" [hidden]="loggedIn">Login<span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" (click)="onOpenModal('logout')" [hidden]="!loggedIn">Logout <span class="sr-only">(current)</span></a>
+        </li>
+     </ul>
+     
+  </div>
+</nav>
+<div class="container" id="main-container">
+<!-- Login Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <h5 class="modal-title" id="loginModalTitleLabel">Login with ID</h5>
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <form #editForm="ngForm">
+              <div class="form-group">
+                 <label for="name">User ID</label>
+                 <input type="text" ngModel name="userId" class="form-control" id="name" placeholder="User_ID">
+              </div>
+              <div class="modal-footer">
+                 <button type="button" id="" data-dismiss="modal" class="btn btn-secondary">Close</button>
+                 <button (click)="onLogin(editForm.value)" data-dismiss="modal" class="btn btn-primary" >Signup &amp; Login</button>
+              </div>
+           </form>
+        </div>
+     </div>
+  </div>
+</div>
+
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModelLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+     <div class="modal-content">
+        <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+           </button>
+        </div>
+        <div class="modal-body">
+           <p>Are you sure you want to logout?</p>
+           <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+              <button (click)="onLogout()" class="btn btn-danger" data-dismiss="modal">Yes</button>
+           </div>
+        </div>
+     </div>
+  </div>
+</div>
+</div>
+
+<!-- ---------------------------- -->
+
+<div [hidden]="!loggedIn" class="col-lg-12 col-md-12 col-xl-12">
+<div class="alert alert-info" role="alert">
+  <h4 class="alert-heading" >Welcome, {{loggedInUser?.userId}}</h4>
+</div>
+</div>
+
+<!-- ---------------------------- -->
+
+<div class="container" id="main-container">
+<div [hidden]="!(loggedIn && loggedInUserRequests)" class="row">
+   <div *ngIf="loggedInUser.customer; else expertTable">
+      <div class="card" style="width: 40rem;" *ngFor="let loggedInUserRequest of loggedInUserRequests">
+         <div class="card-header">
+            <h5>Request ID: {{loggedInUserRequest?.requestId}}</h5>
+         </div>
+         <ul class="list-group list-group-flush">
+            <li class="list-group-item">Created By: {{loggedInUserRequest?.createdBy}}</li>
+            <li class="list-group-item">Created On: {{loggedInUserRequest?.createdOn}}</li>
+            <li class="list-group-item">Current Task: {{loggedInUserRequest?.currentTaskId}}</li>
+            <li class="list-group-item">Assigned To: {{loggedInUserRequest?.assignedTo}}</li>
+         </ul>
+      </div>
+   </div>
+   <ng-template #expertTable>
+      <div>
+         <table class="table">
+            <thead class="thead-light">
+            <tr>
+               <th scope="col">Request ID</th>
+               <th scope="col">Created By</th>
+               <th scope="col">Created On</th>
+               <th scope="col">Current Task</th>
+               <th scope="col">Task Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let loggedInUserRequest of loggedInUserRequests">
+               <th scope="row">{{loggedInUserRequest?.requestId}}</th>
+               <td>{{loggedInUserRequest?.createdBy}}</td>
+               <td>{{loggedInUserRequest?.createdOn}}</td>
+               <td>{{loggedInUserRequest?.currentTaskId}}</td>
+               <td><button class="btn btn-success" >Mark as Complete</button></td>
+            </tr>
+            </tbody>
+         </table>
+      </div>
+   </ng-template>
+</div>
+
+<!-- ---------------------------- -->
+<div *ngIf="(loggedIn && loggedInUserRequests?.length === 0)" class="row">
+   <div class="card" style="width: 18rem;">
+      <div class="card-header" *ngIf="loggedInUser.customer;">
+         No request raised.
+      </div>
+   </div>
+</div>
+</div>
